@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valentine's Day Quiz 💌</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: linear-gradient(135deg, #ffb6c1, #ffc0cb, #ff69b4);
+    color: #333;
+    overflow: hidden;
+    height: 100vh;
+    margin: 0;
+    padding: 20px;
+    touch-action: pan-y;
+  }
+  .question {
+    margin: 30px auto;
+    padding: 25px;
+    border: 2px solid pink;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.9);
+    max-width: 400px;
+    transition: all 0.5s ease;
+  }
+  button {
+    display: block;
+    margin: 10px auto;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    background-color: #ff69b4;
+    color: white;
+    transition: transform 0.2s ease;
+  }
+  button:hover {
+    transform: scale(1.1);
+  }
+  .feedback {
+    font-size: 24px;
+    margin-top: 15px;
+    min-height: 30px;
+    transition: all 0.3s ease;
+  }
+  .heart {
+    position: absolute;
+    font-size: 24px;
+    animation: float 4s linear infinite;
+  }
+  @keyframes float {
+    0% { transform: translateY(0) rotate(0deg); opacity:1; }
+    100% { transform: translateY(-100vh) rotate(360deg); opacity:0; }
+  }
+</style>
+</head>
+<body>
+
+<h1>💌 Valentine's Day Quiz 💌</h1>
+<div id="quiz-container"></div>
+
+<script>
+const questions = [
+  { q: "1. What's my favorite color?", options: ["Blue", "Red", "Green", "Yellow"], answer: "Blue" },
+  { q: "2. What is the first gift that I ever bought for you?", options: ["Bible", "Wallet", "Bread"], answer: "Bread" },
+  { q: "3. What is my favorite thing to do?", options: ["Sleep", "Dance", "Play music"], answer: "Sleep" },
+  { q: "4. Will you be my Valentine? 💌", options: ["Yes", "No"], answer: "Yes" }
+];
+
+let current = 0;
+let startX = 0;
+
+function showQuestion() {
+  const container = document.getElementById("quiz-container");
+  container.innerHTML = "";
+  if (current >= questions.length) {
+    container.innerHTML = `<h2>Thank you Obim ❤️💖💘💞💗💓💕</h2>`;
+    createHearts(50);
+    return;
+  }
+
+  const q = questions[current];
+  const questionDiv = document.createElement("div");
+  questionDiv.className = "question";
+
+  const p = document.createElement("p");
+  p.textContent = q.q;
+  questionDiv.appendChild(p);
+
+  q.options.forEach(option => {
+    const btn = document.createElement("button");
+    btn.textContent = option;
+    btn.onclick = () => handleAnswer(option, q.answer);
+    questionDiv.appendChild(btn);
+  });
+
+  const feedback = document.createElement("div");
+  feedback.className = "feedback";
+  feedback.id = "feedback";
+  questionDiv.appendChild(feedback);
+
+  container.appendChild(questionDiv);
+}
+
+function handleAnswer(selected, correct) {
+  const feedback = document.getElementById("feedback");
+
+  // Case-insensitive and trims spaces
+  if (selected.trim().toLowerCase() === correct.trim().toLowerCase()) {
+    if (current === 3) {
+      feedback.textContent = "❤️💖💘💞💗💓💕❤️❤️💘💖💗💓";
+      createHearts(30);
+    } else {
+      feedback.textContent = "❤️";
+    }
+  } else {
+    feedback.textContent = "🖕🏼  The correct answer is: " + correct;
+  }
+
+  setTimeout(() => {
+    current++;
+    showQuestion();
+  }, 1500);
+}
+
+// Floating hearts
+function createHearts(count) {
+  for (let i = 0; i < count; i++) {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.textContent = "❤️";
+    heart.style.left = Math.random() * window.innerWidth + "px";
+    heart.style.fontSize = (15 + Math.random() * 30) + "px";
+    heart.style.animationDuration = (3 + Math.random() * 5) + "s";
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 6000);
+  }
+}
+
+// Swipe support
+document.addEventListener('touchstart', e => startX = e.touches[0].clientX);
+document.addEventListener('touchend', e => {
+  const endX = e.changedTouches[0].clientX;
+  if (endX - startX > 50) current = Math.max(0, current - 1); 
+  else if (startX - endX > 50) current++;
+  showQuestion();
+});
+
+showQuestion();
+</script>
+
+</body>
+</html>
